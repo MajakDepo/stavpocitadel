@@ -1,232 +1,217 @@
 :root {
-    --bg-base: #0a0a0a;
-    --bg-panel: #141414;
-    --border-color: #333;
-    --accent-color: #ff6600; /* Bezpečnostní oranžová */
-    --text-main: #e0e0e0;
-    --text-muted: #777;
-    --danger</-color: #cc0000;
-    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --font-mono: 'Courier New', Courier, monospace;
+    --bg-color: #f0f2f5;       /* Světle šedá (barva betonu) */
+    --panel-bg: #ffffff;       /* Čistá bílá */
+    --text-main: #222222;      /* Tmavá antracitová pro dobrý kontrast */
+    --text-muted: #666666;     /* Šedá pro popisky */
+    --accent: #d84315;         /* Tlumená bezpečnostní oranžová */
+    --border-color: #2b2b2b;   /* Výrazné ohraničení */
+    --danger: #c62828;         /* Červená pro mazání */
 }
 
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
-    background-color: var(--bg-base);
+    background-color: var(--bg-color);
     color: var(--text-main);
-    font-family: var(--font-ui);
-    -webkit-font-smoothing: antialiased;
-    padding-bottom: 40px;
+    margin: 0;
+    padding: 15px 10px;
 }
 
-/* Header */
-.sys-header {
-    background: #000;
-    border-bottom: 2px solid var(--accent-color);
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.sys-header h1 {
-    font-family: var(--font-mono);
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-    color: var(--text-main);
-}
-
-.blink {
-    animation: blinker 1s linear infinite;
-    color: var(--accent-color);
-}
-
-@keyframes blinker {
-    50% { opacity: 0; }
-}
-
-.status-badge {
-    font-size: 0.65rem;
-    font-family: var(--font-mono);
-    color: #4caf50;
-    border: 1px solid #4caf50;
-    padding: 3px 6px;
-    letter-spacing: 1px;
-}
-
-/* Layout & Panels */
 .container {
-    padding: 15px;
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
-.panel {
-    background-color: var(--bg-panel);
-    border: 1px solid var(--border-color);
-    padding: 20px 15px;
-    margin-bottom: 20px;
-    position: relative;
-}
-
-.panel-heading {
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    color: var(--accent-color);
-    margin-bottom: 20px;
+/* Hlavička */
+header h1 {
+    color: var(--text-main);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 2rem;
+    margin-top: 0;
+    border-bottom: 4px solid var(--accent);
+    display: inline-block;
+    padding-bottom: 5px;
     letter-spacing: 1px;
 }
 
-/* Forms */
+/* Panely (karty) */
+.panel {
+    background: var(--panel-bg);
+    border: 2px solid var(--border-color);
+    padding: 20px;
+    margin-bottom: 25px;
+    /* Mírnější tvrdý stín pro čistší vzhled */
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+}
+
+h2, h3 {
+    margin-top: 0;
+    color: var(--text-main);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+h2 {
+    font-size: 1.2em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+h3 {
+    color: var(--accent);
+    font-family: 'Courier New', Courier, monospace;
+}
+
 .form-group {
-    margin-bottom: 15px;
-    width: 100%;
-}
-
-.form-row {
-    display: flex;
-    gap: 10px;
-}
-
-.half {
-    width: 50%;
+    margin-bottom: 20px;
 }
 
 label {
-    display: block
-    margin-bottom: 5px;
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    font-size: 0.85em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
+/* Formulářové prvky */
 input, select {
     width: 100%;
-    background-color: #000;
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
     padding: 12px;
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    border-radius: 0;
+    background-color: #fff;
+    border: 2px solid var(--border-color);
+    color: var(--text-main);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-radius: 0; /* Ostré hrany */
     appearance: none;
-    outline: none;
+    transition: border-color 0.2s;
 }
 
 input:focus, select:focus {
-    border-color: var(--accent-color);
+    outline: none;
+    border-color: var(--accent);
+}
+
+/* Tlačítka */
+button {
+    width: 100%;
+    border: 2px solid var(--border-color);
+    padding: 15px;
+    border-radius: 0;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.1s;
 }
 
 .btn-primary {
-    width: 100%;
-    background-color: var(--accent-color);
-    color: #000;
-    border: none;
-    padding: 15px;
-    font-family: var(--font-mono);
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-top: 10px;
-    text-transform: uppercase;
-    transition: background 0.2s;
+    background-color: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 3px 3px 0px var(--border-color);
 }
 
 .btn-primary:active {
-    background-color: #e65c00;
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px var(--border-color);
 }
 
-.custom-dates-hidden {
-    display: none;
-}
-
-/* Data Output (Mobile Cards) */
-.category-block {
-    margin-bottom: 30px;
-}
-
-.category-title {
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 8px;
-    margin-bottom: 15px;
-    color: #fff;
-}
-
-.record-card {
-    background-color: var(--bg-panel);
-    border-left: 3px solid var(--border-color);
-    padding: 12px;
-    margin-bottom: 10px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 10px;
-}
-
-.record-card.first-record {
-    border-left-color: var(--text-muted);
-}
-
-.record-card:not(.first-record) {
-    border-left-color: var(--accent-color);
-}
-
-.record-details {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.record-date {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-}
-
-.record-value {
-    font-family: var(--font-mono);
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-
-.record-consumption {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    color: var(--accent-color);
-    margin-top: 4px;
-}
-
-.record-actions {
-    display: flex;
-    align-items: center;
-}
-
-.btn-delete {
+button.delete-btn {
     background-color: transparent;
-    border: 1px solid var(--danger-color);
-    color: var(--danger-color);
-    padding: 8px 12px;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    cursor: pointer;
+    border: 2px solid var(--danger);
+    color: var(--danger);
+    padding: 8px;
+    font-size: 0.85em;
+    box-shadow: none;
 }
 
-.btn-delete:active {
-    background-color: var(--danger-color);
+button.delete-btn:active {
+    background-color: var(--danger);
     color: #fff;
 }
 
-.empty-state {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
+/* Tabulky pro desktop */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
     color: var(--text-muted);
-    text-align: center;
-    padding: 20px;
-    border: 1px dashed var(--border-color);
+    font-size: 0.8em;
+    text-transform: uppercase;
+    background-color: #fafafa;
+}
+
+td {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.05em;
+}
+
+td strong {
+    color: var(--accent);
+}
+
+/* RESPONZIVITA - Změna tabulky na přehledné karty pro mobilní telefony */
+@media (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    tr {
+        margin-bottom: 15px;
+        border: 2px solid var(--border-color);
+        background: #fff;
+    }
+    
+    td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding: 12px 12px 12px 45%;
+        text-align: right;
+    }
+    
+    td:last-child {
+        border-bottom: none;
+    }
+    
+    td:before {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 12px;
+        width: 40%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        font-weight: bold;
+        font-size: 0.8em;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        content: attr(data-label);
+    }
 }
