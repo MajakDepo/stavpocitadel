@@ -1,21 +1,18 @@
-// Inicializace dat z localStorage nebo vytvoření prázdného pole
-let records = JSON.parse(localStorage.getItem('energyRecords')) || [];
+let records = JSON.parse(localStorage.getItem('sysEnergoRecords')) || [];
 
-// Nastavení dnešního data jako výchozího při načtení
+// Nastavení data
 document.getElementById('date').valueAsDate = new Date();
 
-// DOM elementy
 const form = document.getElementById('recordForm');
 const periodSelect = document.getElementById('period');
 const customDates = document.getElementById('custom-dates');
 const dateFrom = document.getElementById('date-from');
 const dateTo = document.getElementById('date-to');
 
-// Event listenery
 form.addEventListener('submit', addRecord);
 periodSelect.addEventListener('change', handleFilterChange);
-dateFrom.addEventListener('change', renderTables);
-dateTo.addEventListener('change', renderTables);
+dateFrom.addEventListener('change', renderLists);
+dateTo.addEventListener('change', renderLists);
 
 function addRecord(e) {
     e.preventDefault();
@@ -33,34 +30,36 @@ function addRecord(e) {
 
     records.push(newRecord);
     saveData();
-    renderTables();
-    form.reset();
-    document.getElementById('date').valueAsDate = new Date(); // Reset data
+    renderLists();
+    
+    // Reset inputs, ale zachování kategorie a nastavení dnešního data
+    document.getElementById('value').value = '';
+    document.getElementById('date').valueAsDate = new Date();
 }
 
 function deleteRecord(id) {
     records = records.filter(record => record.id !== id);
     saveData();
-    renderTables();
+    renderLists();
 }
 
 function saveData() {
-    localStorage.setItem('energyRecords', JSON.stringify(records));
+    localStorage.setItem('sysEnergoRecords', JSON.stringify(records));
 }
 
 function handleFilterChange() {
     if (periodSelect.value === 'custom') {
-        customDates.style.display = 'inline-block';
+        customDates.classList.remove('custom-dates-hidden');
     } else {
-        customDates.style.display = 'none';
+        customDates.classList.add('custom-dates-hidden');
     }
-    renderTables();
+    renderLists();
 }
 
 function getFilteredRecords() {
     const period = periodSelect.value;
     const now = new Date();
-    let startDate = new Date(0); // Výchozí - počátek věků
+    let startDate = new Date(0);
     let endDate = new Date('2100-01-01');
 
     if (period === 'week') {
@@ -70,62 +69,65 @@ function getFilteredRecords() {
         startDate = new Date();
         startDate.setMonth(now.getMonth() - 1);
     } else if (period === 'year') {
-        startDate = new Date(now.getFullYear(), 0, 1);
-    } else if (period === 'custom') {
-        if (dateFrom.value) startDate = new Date(dateFrom.value);
-        if (dateTo.value) endDate = new Date(dateTo.value);
-        endDate.setHours(23, 59, 59); // Konec vybraného dne
-    }
-
-    return records.filter(record => {
-        const recordDate = new Date(record.date);
-        return recordDate >= startDate && recordDate <= endDate;
+        startDate = new Date(now.getFullYear(), 0 <= endDate;
     });
 }
 
-function renderTables() {
+function renderLists() {
     const filteredRecords = getFilteredRecords();
     const categories = ['Voda', 'Plyn', 'Elektřina'];
 
     categories.forEach(category => {
-        const tbody = document.querySelector(`#table-${category} tbody`);
-        tbody.innerHTML = ''; // Vyčištění tabulky
+        const container = document.getElementById(`list-${category}`);
+        container.innerHTML = '';
 
-        // Vyfiltrování pouze dané kategorie a seřazení podle data od nejstaršího
         const catRecords = filteredRecords
             .filter(r => r.category === category)
             .sort((a, b) => new Date(a.date) - new Date(b.date));
 
         if (catRecords.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Žádné záznamy v tomto období</td></tr>';
+            container.innerHTML = '<div class="empty-state">ŽÁDNÁ DATA</div>';
             return;
         }
 
-        const firstValue = catRecords[0].value; // Hodnota prvního záznamu (pro výpočet spotřeby)
+        const firstValue = catRecords[0].value;
 
-        catRecords.forEach((record, index) => {
-            const tr = document.createElement('tr');
+        // Procházení odzadu, abychom viděli nejnovější záznamy nahoře
+        catRecords.slice().reverse().forEach(record => {
+            // Najdeme původní index pro výpočet rozdílu
+            const originalIndex = catRecords.findIndex(r => r.id === record.id);
             
-            // Formátování data do českého tvaru
             const dateObj = new Date(record.date);
-            const formattedDate = dateObj.toLocaleDateString('cs-CZ');
+            // Formát data DD.MM.YYYY
+            const formattedDate = dateObj.toLocaleDateString('cs-CZ', {day: '2-digit', month: '2-digit', year: 'numeric'});
             
-            // Výpočet spotřeby: od druhého záznamu počítáme rozdíl od toho úplně prvního
-            let consumption = '-';
-            if (index > 0) {
-                consumption = (record.value - firstValue).toFixed(2);
+            let consumptionHtml = '';
+            let isFirst = originalIndex === 0;
+
+            if (!isFirst) {
+                const consumption = (record.value - firstValue).toFixed(2);
+                consumptionHtml = `<div class="record-consumption">+ ${consumption} od počátku</div>`;
+            } else {
+                consumptionHtml = `<div class="record-consumption" style="color: var(--text-muted)">Výchozí hodnota</div>`;
             }
 
-            tr.innerHTML = `
-                <td>${formattedDate}</td>
-                <td>${record.value}</td>
-                <td><strong>${consumption}</strong></td>
-                <td><button class="delete-btn" onclick="deleteRecord('${record.id}')">Smazat</button></td>
+            const card = document.createElement('div');
+            card.className = `record-card ${isFirst ? 'first-record' : ''}`;
+            
+            card.innerHTML = `
+                <div class="record-details">
+                    <div class="record-date">${formattedDate}</div>
+                    <div class="record-value">${record.value}</div>
+                    ${consumptionHtml}
+                </div>
+                <div class="record-actions">
+                    <button class="btn-delete" onclick="deleteRecord('${record.id}')">X</button>
+                </div>
             `;
-            tbody.appendChild(tr);
+            container.appendChild(card);
         });
     });
 }
 
-// První vykreslení po načtení stránky
-renderTables();
+// První vykreslení
+renderLists();
