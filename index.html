@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidence energií a vody</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Evidence stavu počítadel</h1>
+
+        <!-- Formulář pro přidání nového záznamu -->
+        <section class="add-record">
+            <h2>Přidat nový záznam</h2>
+            <form id="recordForm">
+                <div class="form-group">
+                    <label for="category">Kategorie:</label>
+                    <select id="category" required>
+                        <option value="Voda">Voda (m³)</option>
+                        <option value="Plyn">Plyn (m³)</option>
+                        <option value="Elektřina">Elektřina (kWh)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Datum:</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="value">Stav počítadla:</label>
+                    <input type="number" step="0.01" id="value" required placeholder="Např. 1500.5">
+                </div>
+                <button type="submit">Uložit záznam</button>
+            </form>
+        </section>
+
+        <!-- Filtrování období -->
+        <section class="filters">
+            <h2>Filtrování záznamů</h2>
+            <div class="filter-controls">
+                <label for="period">Zobrazit období:</label>
+                <select id="period">
+                    <option value="all">Všechny záznamy</option>
+                    <option value="week">Poslední týden</option>
+                    <option value="month">Poslední měsíc</option>
+                    <option value="year">Tento rok</option>
+                    <option value="custom">Vlastní datum...</option>
+                </select>
+
+                <div id="custom-dates" style="display: none;">
+                    <input type="date" id="date-from">
+                    <span> - </span>
+                    <input type="date" id="date-to">
+                </div>
+            </div>
+        </section>
+
+        <!-- Výpisy jednotlivých kategorií -->
+        <section class="records-display">
+            <div class="category-section" id="voda-section">
+                <h3>Voda</h3>
+                <table id="table-Voda">
+                    <thead>
+                        <tr><th>Datum</th><th>Stav počítadla</th><th>Spotřeba (od 1. záznamu)</th><th>Akce</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="category-section" id="plyn-section">
+                <h3>Plyn</h3>
+                <table id="table-Plyn">
+                    <thead>
+                        <tr><th>Datum</th><th>Stav počítadla</th><th>Spotřeba (od 1. záznamu)</th><th>Akce</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="category-section" id="elektrina-section">
+                <h3>Elektřina</h3>
+                <table id="table-Elektřina">
+                    <thead>
+                        <tr><th>Datum</th><th>Stav počítadla</th><th>Spotřeba (od 1. záznamu)</th><th>Akce</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
