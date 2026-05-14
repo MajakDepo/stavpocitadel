@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Evidence energií | Terminál</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- Zde je ?v=2 pro vynucení obejití cache prohlížeče -->
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
     <div class="container">
@@ -61,10 +62,9 @@
         </section>
 
         <section class="records-display">
-            <!-- VODA -->
             <div class="category-section panel" id="voda-section">
                 <h3>[ VODA ]</h3>
-                <div class="summary">Celková spotřeba za období: <span id="voda-total">0 m³</span></div>
+                <div class="summary">Celková spotřeba: <span id="voda-total">0 m³</span></div>
                 <table id="table-voda">
                     <thead>
                         <tr><th>Datum</th><th>Stav</th><th>Nová spotřeba</th><th>Akce</th></tr>
@@ -73,10 +73,9 @@
                 </table>
             </div>
 
-            <!-- PLYN -->
             <div class="category-section panel" id="plyn-section">
                 <h3>[ PLYN ]</h3>
-                <div class="summary">Celková spotřeba za období: <span id="plyn-total">0 m³</span></div>
+                <div class="summary">Celková spotřeba: <span id="plyn-total">0 m³</span></div>
                 <table id="table-plyn">
                     <thead>
                         <tr><th>Datum</th><th>Stav</th><th>Nová spotřeba</th><th>Akce</th></tr>
@@ -85,10 +84,9 @@
                 </table>
             </div>
 
-            <!-- ELEKTŘINA -->
             <div class="category-section panel" id="elektrina-section">
                 <h3>[ ELEKTŘINA ]</h3>
-                <div class="summary">Celková spotřeba za období: <span id="elektrina-total">0 kWh</span></div>
+                <div class="summary">Celková spotřeba: <span id="elektrina-total">0 kWh</span></div>
                 <table id="table-elektrina">
                     <thead>
                         <tr><th>Datum</th><th>Stav</th><th>Nová spotřeba</th><th>Akce</th></tr>
@@ -99,6 +97,7 @@
         </section>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Zde je ?v=2 pro vynucení načtení nového javascriptu -->
+    <script src="script.js?v=2"></script>
 </body>
 </html>
