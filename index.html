@@ -4,14 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Evidence energií | Terminál</title>
-    <!-- Zde je ?v=2 pro vynucení obejití cache prohlížeče -->
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>SYS_EVIDENCE</h1>
         </header>
+
+        <!-- ZÁLOHOVÁNÍ DAT -->
+        <section class="backup panel">
+            <h2>> ZÁLOHA A OBNOVA DAT</h2>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" id="btn-export" class="btn-primary" style="flex: 1; min-width: 200px;">💾 ULOŽIT DO MOBILU</button>
+                <label class="btn-primary" style="flex: 1; min-width: 200px; text-align: center; cursor: pointer; padding: 15px; border: 2px solid var(--border-color); display: inline-block;">
+                    📂 NAHRÁT ZE SOUBORU
+                    <input type="file" id="file-import" accept=".json" style="display: none;">
+                </label>
+            </div>
+            <p style="font-size: 0.8em; color: var(--text-muted); margin-top: 10px;">Doporučujeme data pravidelně ukládat. Zabráníte tak jejich ztrátě při vymazání prohlížeče.</p>
+        </section>
 
         <section class="add-record panel">
             <h2>> NOVÝ ZÁZNAM</h2>
@@ -39,7 +51,7 @@
         <section class="filters panel">
             <h2>> FILTR ZÁZNAMŮ</h2>
             <div class="form-group">
-                <label for="period">Aktivní období</label>
+                <label for="period">Aktivní období pro výpočet spotřeby</label>
                 <select id="period">
                     <option value="all">VŠECHNY ZÁZNAMY</option>
                     <option value="week">POSLEDNÍCH 7 DNÍ</option>
@@ -64,7 +76,7 @@
         <section class="records-display">
             <div class="category-section panel" id="voda-section">
                 <h3>[ VODA ]</h3>
-                <div class="summary">Celková spotřeba: <span id="voda-total">0 m³</span></div>
+                <div class="summary">Spotřeba za vybrané období: <span id="voda-total">0 m³</span></div>
                 <table id="table-voda">
                     <thead>
                         <tr><th>Datum</th><th>Stav</th><th>Nová spotřeba</th><th>Akce</th></tr>
@@ -75,7 +87,7 @@
 
             <div class="category-section panel" id="plyn-section">
                 <h3>[ PLYN ]</h3>
-                <div class="summary">Celková spotřeba: <span id="plyn-total">0 m³</span></div>
+                <div class="summary">Spotřeba za vybrané období: <span id="plyn-total">0 m³</span></div>
                 <table id="table-plyn">
                     <thead>
                         <tr><th>Datum</th><th>Stav</th><th>Nová spotřeba</th><th>Akce</th></tr>
@@ -86,7 +98,7 @@
 
             <div class="category-section panel" id="elektrina-section">
                 <h3>[ ELEKTŘINA ]</h3>
-                <div class="summary">Celková spotřeba: <span id="elektrina-total">0 kWh</span></div>
+                <div class="summary">Spotřeba za vybrané období: <span id="elektrina-total">0 kWh</span></div>
                 <table id="table-elektrina">
                     <thead>
                         <tr><th>Datum</th><th>Stav</th><th>Nová spotřeba</th><th>Akce</th></tr>
@@ -97,7 +109,6 @@
         </section>
     </div>
 
-    <!-- Zde je ?v=2 pro vynucení načtení nového javascriptu -->
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=3"></script>
 </body>
 </html>
