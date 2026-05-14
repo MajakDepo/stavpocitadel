@@ -1,6 +1,6 @@
 let records = JSON.parse(localStorage.getItem('energyRecords')) || [];
 
-// AUTOMATICKÁ OPRAVA STARÝCH DAT (pokud máš uložená data z předchozích verzí s velkým písmenem)
+// Automatická oprava starších dat (pro jistotu z předchozích verzí)
 records = records.map(record => {
     if (record.category === 'Voda') record.category = 'voda';
     if (record.category === 'Plyn') record.category = 'plyn';
@@ -17,10 +17,55 @@ const customDates = document.getElementById('custom-dates');
 const dateFrom = document.getElementById('date-from');
 const dateTo = document.getElementById('date-to');
 
+// --- EVENT LISTENERY ---
 form.addEventListener('submit', addRecord);
 periodSelect.addEventListener('change', handleFilterChange);
 dateFrom.addEventListener('change', renderTables);
 dateTo.addEventListener('change', renderTables);
+
+// --- ZÁLOHA A OBNOVA (Nové funkce) ---
+document.getElementById('btn-export').addEventListener('click', () => {
+    if(records.length === 0) {
+        alert("Nejsou žádná data k uložení.");
+        return;
+    }
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    
+    // Vytvoření názvu souboru s dnešním datem
+    const dateStr = new Date().toISOString().split('T')[0];
+    downloadAnchorNode.setAttribute("download", `energie_zaloha_${dateStr}.json`);
+    
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+});
+
+document.getElementById('file-import').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        try {
+            const importedData = JSON.parse(event.target.result);
+            if (Array.isArray(importedData)) {
+                records = importedData; // Přepíše aktuální data těmi ze zálohy
+                saveData();
+                renderTables();
+                alert("Data byla úspěšně nahrána a obnovena!");
+            } else {
+                alert("Soubor nemá správný formát.");
+            }
+        } catch (err) {
+            alert("Došlo k chybě při čtení souboru.");
+        }
+    };
+    reader.readAsText(file);
+    e.target.value = ''; // Reset inputu
+});
+// ------------------------------------
 
 function addRecord(e) {
     e.preventDefault();
@@ -35,15 +80,16 @@ function addRecord(e) {
     saveData();
     renderTables();
     
-    // Vyčištění formuláře po úspěšném přidání
     form.reset();
     document.getElementById('date').valueAsDate = new Date();
 }
 
 function deleteRecord(id) {
-    records = records.filter(record => record.id !== id);
-    saveData();
-    renderTables();
+    if(confirm("Opravdu chcete tento záznam smazat?")) {
+        records = records.filter(record => record.id !== id);
+        saveData();
+        renderTables();
+    }
 }
 
 function saveData() {
@@ -60,7 +106,7 @@ function getFilterBoundaries() {
     const now = new Date();
     now.setHours(23, 59, 59, 999);
 
-    let startDate = new Date(0); // Od počátku věků
+    let startDate = new Date(0);
     let endDate = new Date('2100-01-01');
 
     if (period === 'week') {
@@ -70,7 +116,7 @@ function getFilterBoundaries() {
         endDate = now;
     } else if (period === 'month') {
         startDate = new Date();
-        startDate.setMonth(now.getMonth() - 1);
+        startDate.setDate(now.getDate() - 30); // Opraveno přesně na 30 dní
         startDate.setHours(0, 0, 0, 0);
         endDate = now;
     } else if (period === 'year') {
@@ -100,18 +146,19 @@ function renderTables() {
     ];
 
     categoriesInfo.forEach(cat => {
-        // Pojistka, kdyby náhodou neexistovala tabulka v HTML
         const tableElement = document.querySelector(`#table-${cat.id} tbody`);
         const totalSpan = document.getElementById(`${cat.id}-total`);
         
-        if (!tableElement || !totalSpan) return; // Pokud chybí, bezpečně přeskočí a neshodí aplikaci
+        if (!tableElement || !totalSpan) return;
         
         tableElement.innerHTML = '';
 
+        // Seřazení chronologicky
         const allCatRecords = records
             .filter(r => r.category === cat.id)
             .sort((a, b) => new Date(a.date) - new Date(b.date));
 
+        // Výpočet spotřeby OPROTI PŘEDCHOZÍMU záznamu (bez ohledu na filtr)
         const processedRecords = allCatRecords.map((record, index) => {
             let consumption = 0;
             if (index > 0) {
@@ -120,6 +167,7 @@ function renderTables() {
             return { ...record, consumption };
         });
 
+        // Aplikace filtru období
         const filteredRecords = processedRecords.filter(record => {
             const rDate = new Date(record.date);
             rDate.setHours(12, 0, 0, 0);
@@ -135,6 +183,7 @@ function renderTables() {
         }
 
         filteredRecords.forEach((record) => {
+            // SCÍTÁNÍ POUZE VYFILTROVANÝCH ZÁZNAMŮ
             periodTotal += record.consumption;
 
             const tr = document.createElement('tr');
@@ -153,9 +202,9 @@ function renderTables() {
             tableElement.appendChild(tr);
         });
 
+        // Vypsání výsledku do HTML panelu
         totalSpan.textContent = `${periodTotal.toFixed(2)} ${cat.unit}`;
     });
 }
 
-// První vykreslení dat
 renderTables();
