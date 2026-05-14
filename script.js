@@ -1,4 +1,14 @@
 let records = JSON.parse(localStorage.getItem('energyRecords')) || [];
+
+// AUTOMATICKÁ OPRAVA STARÝCH DAT (pokud máš uložená data z předchozích verzí s velkým písmenem)
+records = records.map(record => {
+    if (record.category === 'Voda') record.category = 'voda';
+    if (record.category === 'Plyn') record.category = 'plyn';
+    if (record.category === 'Elektřina') record.category = 'elektrina';
+    return record;
+});
+localStorage.setItem('energyRecords', JSON.stringify(records));
+
 document.getElementById('date').valueAsDate = new Date();
 
 const form = document.getElementById('recordForm');
@@ -15,7 +25,7 @@ dateTo.addEventListener('change', renderTables);
 function addRecord(e) {
     e.preventDefault();
     
-    const category = document.getElementById('category').value; // 'voda', 'plyn', 'elektrina'
+    const category = document.getElementById('category').value;
     const date = document.getElementById('date').value;
     const value = parseFloat(document.getElementById('value').value);
 
@@ -24,6 +34,8 @@ function addRecord(e) {
     records.push(newRecord);
     saveData();
     renderTables();
+    
+    // Vyčištění formuláře po úspěšném přidání
     form.reset();
     document.getElementById('date').valueAsDate = new Date();
 }
@@ -48,7 +60,7 @@ function getFilterBoundaries() {
     const now = new Date();
     now.setHours(23, 59, 59, 999);
 
-    let startDate = new Date(0); // Rok 1970
+    let startDate = new Date(0); // Od počátku věků
     let endDate = new Date('2100-01-01');
 
     if (period === 'week') {
@@ -88,16 +100,18 @@ function renderTables() {
     ];
 
     categoriesInfo.forEach(cat => {
-        const tbody = document.querySelector(`#table-${cat.id} tbody`);
+        // Pojistka, kdyby náhodou neexistovala tabulka v HTML
+        const tableElement = document.querySelector(`#table-${cat.id} tbody`);
         const totalSpan = document.getElementById(`${cat.id}-total`);
-        tbody.innerHTML = '';
+        
+        if (!tableElement || !totalSpan) return; // Pokud chybí, bezpečně přeskočí a neshodí aplikaci
+        
+        tableElement.innerHTML = '';
 
-        // 1. Získáme všechny záznamy kategorie a seřadíme je od nejstaršího
         const allCatRecords = records
             .filter(r => r.category === cat.id)
             .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        // 2. Vypočítáme spotřebu pro každý záznam OPROTI PŘEDCHOZÍMU
         const processedRecords = allCatRecords.map((record, index) => {
             let consumption = 0;
             if (index > 0) {
@@ -106,31 +120,27 @@ function renderTables() {
             return { ...record, consumption };
         });
 
-        // 3. Až teď aplikujeme filtr období
         const filteredRecords = processedRecords.filter(record => {
             const rDate = new Date(record.date);
-            rDate.setHours(12, 0, 0, 0); // Bezpečné ignorování časových zón
+            rDate.setHours(12, 0, 0, 0);
             return rDate >= startDate && rDate <= endDate;
         });
 
         let periodTotal = 0;
 
         if (filteredRecords.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">ŽÁDNÁ DATA V TOMTO OBDOBÍ</td></tr>';
+            tableElement.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">ŽÁDNÁ DATA V TOMTO OBDOBÍ</td></tr>';
             totalSpan.textContent = `0 ${cat.unit}`;
             return;
         }
 
-        // 4. Vykreslíme data
         filteredRecords.forEach((record) => {
-            // Sečtení celkové spotřeby ZA OBDOBÍ 
             periodTotal += record.consumption;
 
             const tr = document.createElement('tr');
             const dateObj = new Date(record.date);
             const formattedDate = dateObj.toLocaleDateString('cs-CZ');
             
-            // Pokud je to první záznam celkově (historicky), napíšeme pomlčku
             const isFirstEver = allCatRecords.indexOf(allCatRecords.find(r => r.id === record.id)) === 0;
             const displayConsumption = isFirstEver ? '-' : `+ ${record.consumption.toFixed(2)}`;
 
@@ -140,13 +150,12 @@ function renderTables() {
                 <td data-label="Spotřeba"><strong>${displayConsumption}</strong></td>
                 <td data-label="Akce"><button class="delete-btn" onclick="deleteRecord('${record.id}')">X SMAZAT</button></td>
             `;
-            tbody.appendChild(tr);
+            tableElement.appendChild(tr);
         });
 
-        // Nastavíme nápis s celkovou spotřebou v daném filtru
         totalSpan.textContent = `${periodTotal.toFixed(2)} ${cat.unit}`;
     });
 }
 
-// Spuštění při startu
+// První vykreslení dat
 renderTables();
