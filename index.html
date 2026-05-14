@@ -2,86 +2,96 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evidence energií a vody</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Evidence energií | Terminál</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Evidence stavu počítadel</h1>
+        <header>
+            <h1>SYS_EVIDENCE</h1>
+        </header>
 
-        <!-- Formulář pro přidání nového záznamu -->
-        <section class="add-record">
-            <h2>Přidat nový záznam</h2>
+        <section class="add-record panel">
+            <h2>> NOVÝ ZÁZNAM</h2>
             <form id="recordForm">
                 <div class="form-group">
-                    <label for="category">Kategorie:</label>
+                    <label for="category">Kategorie</label>
                     <select id="category" required>
-                        <option value="Voda">Voda (m³)</option>
-                        <option value="Plyn">Plyn (m³)</option>
-                        <option value="Elektřina">Elektřina (kWh)</option>
+                        <option value="voda">VODA [m³]</option>
+                        <option value="plyn">PLYN [m³]</option>
+                        <option value="elektrina">ELEKTŘINA [kWh]</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="date">Datum:</label>
+                    <label for="date">Datum odečtu</label>
                     <input type="date" id="date" required>
                 </div>
                 <div class="form-group">
-                    <label for="value">Stav počítadla:</label>
-                    <input type="number" step="0.01" id="value" required placeholder="Např. 1500.5">
+                    <label for="value">Stav počítadla</label>
+                    <input type="number" step="0.01" id="value" required placeholder="0.00">
                 </div>
-                <button type="submit">Uložit záznam</button>
+                <button type="submit" class="btn-primary">ULOŽIT DATA</button>
             </form>
         </section>
 
-        <!-- Filtrování období -->
-        <section class="filters">
-            <h2>Filtrování záznamů</h2>
-            <div class="filter-controls">
-                <label for="period">Zobrazit období:</label>
+        <section class="filters panel">
+            <h2>> FILTR ZÁZNAMŮ</h2>
+            <div class="form-group">
+                <label for="period">Aktivní období</label>
                 <select id="period">
-                    <option value="all">Všechny záznamy</option>
-                    <option value="week">Poslední týden</option>
-                    <option value="month">Poslední měsíc</option>
-                    <option value="year">Tento rok</option>
-                    <option value="custom">Vlastní datum...</option>
+                    <option value="all">VŠECHNY ZÁZNAMY</option>
+                    <option value="week">POSLEDNÍCH 7 DNÍ</option>
+                    <option value="month">POSLEDNÍCH 30 DNÍ</option>
+                    <option value="year">AKTUÁLNÍ ROK</option>
+                    <option value="custom">VLASTNÍ ROZSAH...</option>
                 </select>
+            </div>
 
-                <div id="custom-dates" style="display: none;">
+            <div id="custom-dates" style="display: none;">
+                <div class="form-group">
+                    <label for="date-from">Od</label>
                     <input type="date" id="date-from">
-                    <span> - </span>
+                </div>
+                <div class="form-group">
+                    <label for="date-to">Do</label>
                     <input type="date" id="date-to">
                 </div>
             </div>
         </section>
 
-        <!-- Výpisy jednotlivých kategorií -->
         <section class="records-display">
-            <div class="category-section" id="voda-section">
-                <h3>Voda</h3>
-                <table id="table-Voda">
+            <!-- VODA -->
+            <div class="category-section panel" id="voda-section">
+                <h3>[ VODA ]</h3>
+                <div class="summary">Celková spotřeba za období: <span id="voda-total">0 m³</span></div>
+                <table id="table-voda">
                     <thead>
-                        <tr><th>Datum</th><th>Stav počítadla</th><th>Spotřeba (od 1. záznamu)</th><th>Akce</th></tr>
+                        <tr><th>Datum</th><th>Stav</th><th>Nová spotřeba</th><th>Akce</th></tr>
                     </thead>
                     <tbody></tbody>
                 </table>
             </div>
 
-            <div class="category-section" id="plyn-section">
-                <h3>Plyn</h3>
-                <table id="table-Plyn">
+            <!-- PLYN -->
+            <div class="category-section panel" id="plyn-section">
+                <h3>[ PLYN ]</h3>
+                <div class="summary">Celková spotřeba za období: <span id="plyn-total">0 m³</span></div>
+                <table id="table-plyn">
                     <thead>
-                        <tr><th>Datum</th><th>Stav počítadla</th><th>Spotřeba (od 1. záznamu)</th><th>Akce</th></tr>
+                        <tr><th>Datum</th><th>Stav</th><th>Nová spotřeba</th><th>Akce</th></tr>
                     </thead>
                     <tbody></tbody>
                 </table>
             </div>
 
-            <div class="category-section" id="elektrina-section">
-                <h3>Elektřina</h3>
-                <table id="table-Elektřina">
+            <!-- ELEKTŘINA -->
+            <div class="category-section panel" id="elektrina-section">
+                <h3>[ ELEKTŘINA ]</h3>
+                <div class="summary">Celková spotřeba za období: <span id="elektrina-total">0 kWh</span></div>
+                <table id="table-elektrina">
                     <thead>
-                        <tr><th>Datum</th><th>Stav počítadla</th><th>Spotřeba (od 1. záznamu)</th><th>Akce</th></tr>
+                        <tr><th>Datum</th><th>Stav</th><th>Nová spotřeba</th><th>Akce</th></tr>
                     </thead>
                     <tbody></tbody>
                 </table>
